@@ -379,6 +379,12 @@
                     <span>➕</span> Nuevo Empleado
                 </div>
                 <div class="panel-body">
+                    <div th:if="${error}" style="
+                            background:#fff0f0;border:1px solid #fca5a5;border-radius:8px;
+                            padding:10px 14px;margin-bottom:14px;font-size:13px;color:#991b1b;
+                            display:flex;align-items:center;gap:8px;">
+                        ⚠️ <span th:text="${error}"></span>
+                    </div>
                     <form th:action="@{/agregar}" method="post" id="formEmpleado">
 
                         <!-- Selector visual de tipo -->
