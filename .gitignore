@@ -1,0 +1,15 @@
+# Maven
+target/
+
+# Base de datos H2 (se genera al ejecutar)
+*.mv.db
+*.trace.db
+
+# IDEs
+.vscode/
+.idea/
+*.iml
+
+# Python cache
+__pycache__/
+*.pyc

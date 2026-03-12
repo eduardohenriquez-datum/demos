@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema de Empleados — DATUM REDSOFT</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand:       #ff0009;
+            --brand-dark:  #cc0007;
+            --brand-light: #fff0f0;
+            --accent:      #0EA5E9;
+            --success:     #059669;
+            --warning:     #D97706;
+            --danger:      #DC2626;
+            --gray-50:     #F9FAFB;
+            --gray-100:    #F3F4F6;
+            --gray-200:    #E5E7EB;
+            --gray-500:    #6B7280;
+            --gray-700:    #374151;
+            --gray-900:    #111827;
+        }
+
+        * { font-family: 'Inter', sans-serif; }
+
+        body {
+            background-color: var(--gray-50);
+            color: var(--gray-700);
+            min-height: 100vh;
+        }
+
+        /* ── Topbar ── */
+        .topbar {
+            background: var(--gray-900);
+            padding: 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,.3);
+        }
+        .topbar-inner {
+            display: flex;
+            align-items: stretch;
+            height: 56px;
+        }
+        .topbar-logo {
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            background: var(--brand);
+            gap: 10px;
+            text-decoration: none;
+        }
+        .topbar-logo .dot {
+            width: 28px; height: 28px;
+            background: white;
+            border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 13px; color: var(--brand);
+            letter-spacing: -0.5px;
+        }
+        .topbar-logo .name {
+            color: white;
+            font-weight: 700;
+            font-size: 15px;
+            letter-spacing: 0.5px;
+        }
+        .topbar-title {
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            color: #9CA3AF;
+            font-size: 13px;
+            font-weight: 500;
+            border-left: 1px solid #374151;
+        }
+        .topbar-title span { color: white; margin-left: 6px; }
+
+        /* ── Stats ── */
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px 24px;
+            border: 1px solid var(--gray-200);
+            transition: box-shadow .2s;
+        }
+        .stat-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+        .stat-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gray-500);
+            margin-bottom: 6px;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--brand);
+            line-height: 1;
+        }
+        .stat-icon {
+            width: 40px; height: 40px;
+            border-radius: 10px;
+            background: var(--brand-light);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+        }
+
+        /* ── Cards ── */
+        .panel {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+        }
+        .panel-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--gray-100);
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--gray-900);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .panel-header .badge-count {
+            background: var(--brand-light);
+            color: var(--brand);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 999px;
+        }
+        .panel-body { padding: 20px; }
+
+        /* ── Formulario ── */
+        .form-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .form-control, .form-select {
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            font-size: 13px;
+            padding: 8px 12px;
+            color: var(--gray-900);
+            transition: border-color .15s, box-shadow .15s;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--brand);
+            box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+        }
+        .btn-brand {
+            background: var(--brand);
+            border: none;
+            color: white;
+            font-weight: 600;
+            font-size: 13px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            width: 100%;
+            cursor: pointer;
+            transition: background .15s, transform .1s;
+        }
+        .btn-brand:hover { background: var(--brand-dark); }
+        .btn-brand:active { transform: scale(.98); }
+
+        /* ── Tipo selector visual ── */
+        .tipo-pills {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+        .tipo-pill {
+            flex: 1;
+            padding: 8px 4px;
+            border: 2px solid var(--gray-200);
+            border-radius: 8px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--gray-500);
+            transition: all .15s;
+            background: white;
+        }
+        .tipo-pill.active {
+            border-color: var(--brand);
+            color: var(--brand);
+            background: var(--brand-light);
+        }
+        .tipo-pill .pill-icon { font-size: 18px; display: block; margin-bottom: 2px; }
+
+        /* ── Tabla ── */
+        .emp-table { width: 100%; border-collapse: collapse; }
+        .emp-table thead tr {
+            background: var(--gray-50);
+            border-bottom: 2px solid var(--gray-200);
+        }
+        .emp-table th {
+            padding: 10px 16px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--gray-500);
+        }
+        .emp-table td {
+            padding: 14px 16px;
+            font-size: 13px;
+            border-bottom: 1px solid var(--gray-100);
+            vertical-align: middle;
+        }
+        .emp-table tbody tr:hover { background: var(--gray-50); }
+        .emp-table tfoot td {
+            padding: 12px 16px;
+            font-weight: 700;
+            font-size: 13px;
+            background: var(--gray-50);
+            border-top: 2px solid var(--gray-200);
+        }
+
+        /* Avatar */
+        .avatar {
+            width: 34px; height: 34px;
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 13px; color: white;
+            flex-shrink: 0;
+        }
+
+        /* Badges tipo */
+        .tipo-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 999px;
+        }
+        .tipo-gerente     { background: #FEF3C7; color: #92400E; }
+        .tipo-completo    { background: #DBEAFE; color: #1E40AF; }
+        .btn-delete {
+            background: none;
+            border: 1px solid var(--gray-200);
+            border-radius: 6px;
+            color: var(--gray-500);
+            padding: 4px 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all .15s;
+        }
+        .btn-delete:hover {
+            background: #fff0f0;
+            border-color: var(--brand);
+            color: var(--brand);
+        }
+        .tipo-contratista { background: #D1FAE5; color: #065F46; }
+
+        /* ID pill */
+        .id-pill {
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            background: var(--gray-100);
+            color: var(--gray-500);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        /* Salario */
+        .salario { font-weight: 700; color: var(--gray-900); }
+
+        /* Empty state */
+        .empty-state {
+            padding: 60px 20px;
+            text-align: center;
+            color: var(--gray-500);
+        }
+        .empty-state .empty-icon { font-size: 40px; margin-bottom: 12px; }
+        .empty-state p { font-size: 14px; margin: 0; }
+
+        /* ── Pilares OOP ── */
+        .pilar-item {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+        .pilar-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .pilar-icon {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+        .pilar-title { font-size: 12px; font-weight: 700; color: var(--gray-900); }
+        .pilar-desc  { font-size: 11px; color: var(--gray-500); line-height: 1.4; }
+
+        /* ── Footer ── */
+        .footer {
+            margin-top: 48px;
+            padding: 20px 0;
+            border-top: 1px solid var(--gray-200);
+            text-align: center;
+            font-size: 12px;
+            color: var(--gray-500);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Topbar -->
+<nav class="topbar">
+    <div class="container-fluid px-0">
+        <div class="topbar-inner">
+            <a class="topbar-logo">
+                <div class="dot">DR</div>
+                <span class="name">DATUM REDSOFT</span>
+            </a>
+            <div class="topbar-title">
+                Módulo de RRHH &nbsp;›&nbsp; <span>Sistema de Empleados</span>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container py-4">
+
+    <!-- Stats -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="stat-card d-flex align-items-center gap-3">
+                <div class="stat-icon">👥</div>
+                <div>
+                    <div class="stat-label">Total Empleados</div>
+                    <div class="stat-value" th:text="${empleados.size()}">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card d-flex align-items-center gap-3">
+                <div class="stat-icon">💰</div>
+                <div>
+                    <div class="stat-label">Total Nómina</div>
+                    <div class="stat-value"
+                         th:text="'$' + ${#numbers.formatDecimal(totalNomina, 1, 'COMMA', 2, 'POINT')}">$0.00</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card d-flex align-items-center gap-3">
+                <div class="stat-icon">📊</div>
+                <div>
+                    <div class="stat-label">Promedio Salario</div>
+                    <div class="stat-value"
+                         th:text="${empleados.size() > 0} ? '$' + ${#numbers.formatDecimal(totalNomina / empleados.size(), 1, 'COMMA', 2, 'POINT')} : '$0.00'">$0.00</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 align-items-start">
+
+        <!-- Panel izquierdo -->
+        <div class="col-md-4">
+
+            <!-- Formulario -->
+            <div class="panel mb-3">
+                <div class="panel-header">
+                    <span>➕</span> Nuevo Empleado
+                </div>
+                <div class="panel-body">
+                    <form th:action="@{/agregar}" method="post" id="formEmpleado">
+
+                        <!-- Selector visual de tipo -->
+                        <div class="mb-3">
+                            <div class="form-label mb-2">Tipo de Empleado</div>
+                            <div class="tipo-pills">
+                                <div class="tipo-pill active" onclick="seleccionarTipo('TIEMPO_COMPLETO', this)">
+                                    <span class="pill-icon">🏢</span>
+                                    Completo
+                                </div>
+                                <div class="tipo-pill" onclick="seleccionarTipo('CONTRATISTA', this)">
+                                    <span class="pill-icon">📋</span>
+                                    Contratista
+                                </div>
+                                <div class="tipo-pill" onclick="seleccionarTipo('GERENTE', this)">
+                                    <span class="pill-icon">👔</span>
+                                    Gerente
+                                </div>
+                            </div>
+                            <input type="hidden" name="tipo" id="tipoHidden" value="TIEMPO_COMPLETO">
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="form-label">ID</label>
+                            <input type="text" name="id" class="form-control" placeholder="E001" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Nombre completo</label>
+                            <input type="text" name="nombre" class="form-control" placeholder="Ana García" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Departamento</label>
+                            <input type="text" name="departamento" class="form-control" placeholder="Ingeniería" required>
+                        </div>
+
+                        <div id="camposTiempoCompleto">
+                            <div class="mb-2">
+                                <label class="form-label">Salario Base</label>
+                                <input type="number" name="salarioBase" class="form-control" step="0.01" placeholder="50,000">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Prestaciones (factor)</label>
+                                <input type="number" name="prestaciones" class="form-control" step="0.01" placeholder="0.25">
+                            </div>
+                        </div>
+
+                        <div id="camposBono" style="display:none">
+                            <div class="mb-3">
+                                <label class="form-label">Bono</label>
+                                <input type="number" name="bono" class="form-control" step="0.01" placeholder="15,000">
+                            </div>
+                        </div>
+
+                        <div id="camposContratista" style="display:none">
+                            <div class="mb-2">
+                                <label class="form-label">Tarifa por Hora</label>
+                                <input type="number" name="tarifa" class="form-control" step="0.01" placeholder="500">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Horas Trabajadas</label>
+                                <input type="number" name="horas" class="form-control" placeholder="160">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-brand">Guardar empleado</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Pilares OOP -->
+            <div class="panel">
+                <div class="panel-header">🎓 Pilares OOP en este sistema</div>
+                <div class="panel-body py-2">
+                    <div class="pilar-item">
+                        <div class="pilar-icon" style="background:#FEF3C7">🔒</div>
+                        <div>
+                            <div class="pilar-title">Encapsulamiento</div>
+                            <div class="pilar-desc">Atributos privados con getters en <code>Empleado</code></div>
+                        </div>
+                    </div>
+                    <div class="pilar-item">
+                        <div class="pilar-icon" style="background:#DBEAFE">🌳</div>
+                        <div>
+                            <div class="pilar-title">Herencia</div>
+                            <div class="pilar-desc"><code>Gerente → TiempoCompleto → Empleado</code></div>
+                        </div>
+                    </div>
+                    <div class="pilar-item">
+                        <div class="pilar-icon" style="background:#D1FAE5">🔀</div>
+                        <div>
+                            <div class="pilar-title">Polimorfismo</div>
+                            <div class="pilar-desc"><code>calcularSalario()</code> varía según el tipo</div>
+                        </div>
+                    </div>
+                    <div class="pilar-item">
+                        <div class="pilar-icon" style="background:#EDE9FE">🧩</div>
+                        <div>
+                            <div class="pilar-title">Abstracción</div>
+                            <div class="pilar-desc"><code>Empleado</code> es abstract — define el contrato</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel derecho: tabla -->
+        <div class="col-md-8">
+            <div class="panel">
+                <div class="panel-header">
+                    <span>📋</span> Lista de Empleados
+                    <span class="badge-count" th:text="${empleados.size()}">0</span>
+                </div>
+
+                <!-- Empty state -->
+                <div th:if="${empleados.empty}" class="empty-state">
+                    <div class="empty-icon">👤</div>
+                    <p>No hay empleados registrados.<br>Agrega el primero desde el formulario.</p>
+                </div>
+
+                <!-- Tabla -->
+                <div th:unless="${empleados.empty}" style="overflow-x:auto">
+                    <table class="emp-table">
+                        <thead>
+                            <tr>
+                                <th>Empleado</th>
+                                <th>Departamento</th>
+                                <th>Tipo</th>
+                                <th style="text-align:right">Salario</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="emp : ${empleados}">
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="avatar"
+                                             th:style="${emp.class.simpleName == 'Gerente'} ? 'background:#D97706' :
+                                                        (${emp.class.simpleName == 'EmpleadoContratista'} ? 'background:#059669' : 'background:#2563EB')"
+                                             th:text="${#strings.substring(emp.nombre, 0, 1)}">A</div>
+                                        <div>
+                                            <div style="font-weight:600;font-size:13px" th:text="${emp.nombre}"></div>
+                                            <div class="id-pill" th:text="${emp.id}"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="color:#6B7280" th:text="${emp.departamento}"></td>
+                                <td>
+                                    <span th:if="${emp.class.simpleName == 'Gerente'}"
+                                          class="tipo-badge tipo-gerente">👔 Gerente</span>
+                                    <span th:if="${emp.class.simpleName == 'EmpleadoTiempoCompleto'}"
+                                          class="tipo-badge tipo-completo">🏢 Tiempo Completo</span>
+                                    <span th:if="${emp.class.simpleName == 'EmpleadoContratista'}"
+                                          class="tipo-badge tipo-contratista">📋 Contratista</span>
+                                </td>
+                                <td style="text-align:right">
+                                    <span class="salario"
+                                          th:text="'$' + ${#numbers.formatDecimal(emp.calcularSalario(), 1, 'COMMA', 2, 'POINT')}"></span>
+                                </td>
+                                <td>
+                                    <form th:action="@{/eliminar}" method="post" style="margin:0">
+                                        <input type="hidden" name="id" th:value="${emp.id}">
+                                        <button type="submit" class="btn-delete"
+                                                onclick="return confirm('¿Eliminar a ' + this.form.id.value + '?')">
+                                            🗑
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3">Total Nómina</td>
+                                <td style="text-align:right;color:var(--brand)"
+                                    th:text="'$' + ${#numbers.formatDecimal(totalNomina, 1, 'COMMA', 2, 'POINT')}"></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        DATUM REDSOFT &nbsp;·&nbsp; Sistema de Gestión de Empleados &nbsp;·&nbsp; Demo POO
+    </div>
+</div>
+
+<script>
+function seleccionarTipo(tipo, el) {
+    document.querySelectorAll('.tipo-pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('tipoHidden').value = tipo;
+
+    document.getElementById('camposTiempoCompleto').style.display =
+        (tipo === 'TIEMPO_COMPLETO' || tipo === 'GERENTE') ? 'block' : 'none';
+    document.getElementById('camposBono').style.display =
+        tipo === 'GERENTE' ? 'block' : 'none';
+    document.getElementById('camposContratista').style.display =
+        tipo === 'CONTRATISTA' ? 'block' : 'none';
+}
+</script>
+</body>
+</html>

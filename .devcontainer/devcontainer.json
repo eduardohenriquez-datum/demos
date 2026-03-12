@@ -1,0 +1,32 @@
+{
+  "name": "Taller POO — DATUM REDSOFT",
+  "image": "mcr.microsoft.com/devcontainers/java:17",
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "17",
+      "installMaven": true,
+      "mavenVersion": "3.9.6"
+    }
+  },
+  "forwardPorts": [8080],
+  "portsAttributes": {
+    "8080": {
+      "label": "App Web",
+      "onAutoForward": "openBrowser"
+    }
+  },
+  "postCreateCommand": "mvn dependency:resolve -q",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack",
+        "vmware.vscode-spring-boot"
+      ],
+      "settings": {
+        "java.configuration.updateBuildConfiguration": "automatic",
+        "editor.fontSize": 14,
+        "editor.tabSize": 4
+      }
+    }
+  }
+}
