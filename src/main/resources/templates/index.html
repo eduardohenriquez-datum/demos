@@ -403,6 +403,10 @@
                                     <span class="pill-icon">👔</span>
                                     Gerente
                                 </div>
+                                <div class="tipo-pill" onclick="seleccionarTipo('PRACTICANTE', this)">
+                                    <span class="pill-icon">👔</span>
+                                    Practicante
+                                </div>
                             </div>
                             <input type="hidden" name="tipo" id="tipoHidden" value="TIEMPO_COMPLETO">
                         </div>
@@ -538,6 +542,8 @@
                                           class="tipo-badge tipo-completo">🏢 Tiempo Completo</span>
                                     <span th:if="${emp.class.simpleName == 'EmpleadoContratista'}"
                                           class="tipo-badge tipo-contratista">📋 Contratista</span>
+                                    <span th:if="${emp.class.simpleName == 'EmpleadoPracticante'}"
+                                          class="tipo-badge" style="background:#EDE9FE;color:#5B21B6">🎓 Practicante</span>
                                 </td>
                                 <td style="text-align:right">
                                     <span class="salario"
@@ -581,11 +587,15 @@ function seleccionarTipo(tipo, el) {
     document.getElementById('tipoHidden').value = tipo;
 
     document.getElementById('camposTiempoCompleto').style.display =
-        (tipo === 'TIEMPO_COMPLETO' || tipo === 'GERENTE') ? 'block' : 'none';
+        (tipo === 'TIEMPO_COMPLETO' || tipo === 'GERENTE' || tipo === 'PRACTICANTE') ? 'block' : 'none';
     document.getElementById('camposBono').style.display =
         tipo === 'GERENTE' ? 'block' : 'none';
     document.getElementById('camposContratista').style.display =
         tipo === 'CONTRATISTA' ? 'block' : 'none';
+
+    // Renombrar label para practicante
+    const labelSalario = document.querySelector('#camposTiempoCompleto .form-label');
+    if (labelSalario) labelSalario.textContent = tipo === 'PRACTICANTE' ? 'Estipendio' : 'Salario Base';
 }
 </script>
 </body>

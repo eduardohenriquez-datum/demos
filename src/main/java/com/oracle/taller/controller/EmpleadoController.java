@@ -25,15 +25,15 @@ public class EmpleadoController {
 
     @PostMapping("/agregar")
     public String agregar(@RequestParam String tipo,
-                          @RequestParam String id,
-                          @RequestParam String nombre,
-                          @RequestParam String departamento,
-                          @RequestParam(defaultValue = "0") double salarioBase,
-                          @RequestParam(defaultValue = "0") double prestaciones,
-                          @RequestParam(defaultValue = "0") double tarifa,
-                          @RequestParam(defaultValue = "0") int horas,
-                          @RequestParam(defaultValue = "0") double bono,
-                          RedirectAttributes ra) {
+            @RequestParam String id,
+            @RequestParam String nombre,
+            @RequestParam String departamento,
+            @RequestParam(defaultValue = "0") double salarioBase,
+            @RequestParam(defaultValue = "0") double prestaciones,
+            @RequestParam(defaultValue = "0") double tarifa,
+            @RequestParam(defaultValue = "0") int horas,
+            @RequestParam(defaultValue = "0") double bono,
+            RedirectAttributes ra) {
 
         if (id.isBlank() || nombre.isBlank() || departamento.isBlank()) {
             ra.addFlashAttribute("error", "ID, nombre y departamento son obligatorios.");
@@ -53,6 +53,12 @@ public class EmpleadoController {
                     return "redirect:/";
                 }
             }
+            case "PRACTICANTE" -> {
+                if (salarioBase <= 0) {
+                    ra.addFlashAttribute("error", "El estipendio debe ser mayor a 0.");
+                    return "redirect:/";
+                }
+            }
             case "GERENTE" -> {
                 if (salarioBase <= 0 || prestaciones < 0 || bono < 0) {
                     ra.addFlashAttribute("error", "Salario base debe ser mayor a 0.");
@@ -63,9 +69,11 @@ public class EmpleadoController {
 
         try {
             switch (tipo) {
-                case "TIEMPO_COMPLETO" -> service.agregarTiempoCompleto(id, nombre, departamento, salarioBase, prestaciones);
-                case "CONTRATISTA"     -> service.agregarContratista(id, nombre, departamento, tarifa, horas);
-                case "GERENTE"         -> service.agregarGerente(id, nombre, departamento, salarioBase, prestaciones, bono);
+                case "TIEMPO_COMPLETO" ->
+                    service.agregarTiempoCompleto(id, nombre, departamento, salarioBase, prestaciones);
+                case "CONTRATISTA"  -> service.agregarContratista(id, nombre, departamento, tarifa, horas);
+                case "PRACTICANTE"  -> service.agregarPracticante(id, nombre, departamento, salarioBase);
+                case "GERENTE"      -> service.agregarGerente(id, nombre, departamento, salarioBase, prestaciones, bono);
             }
         } catch (DuplicateKeyException e) {
             ra.addFlashAttribute("error", "Ya existe un empleado con ID '" + id + "'.");

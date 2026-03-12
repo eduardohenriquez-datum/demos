@@ -20,17 +20,21 @@ public class EmpleadoService {
     }
 
     public void agregarTiempoCompleto(String id, String nombre, String depto,
-                                       double salarioBase, double prestaciones) {
+            double salarioBase, double prestaciones) {
         dao.guardar(new EmpleadoTiempoCompleto(id, nombre, depto, salarioBase, prestaciones));
     }
 
     public void agregarContratista(String id, String nombre, String depto,
-                                    double tarifa, int horas) {
+            double tarifa, int horas) {
         dao.guardar(new EmpleadoContratista(id, nombre, depto, tarifa, horas));
     }
 
+    public void agregarPracticante(String id, String nombre, String depto, double estipendio) {
+        dao.guardar(new EmpleadoPracticante(id, nombre, depto, estipendio));
+    }
+
     public void agregarGerente(String id, String nombre, String depto,
-                                double salarioBase, double prestaciones, double bono) {
+            double salarioBase, double prestaciones, double bono) {
         dao.guardar(new Gerente(id, nombre, depto, salarioBase, prestaciones, bono));
     }
 
