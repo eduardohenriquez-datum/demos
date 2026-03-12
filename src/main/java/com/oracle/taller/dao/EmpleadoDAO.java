@@ -35,6 +35,10 @@ public class EmpleadoDAO {
         } else if (emp instanceof EmpleadoContratista ec) {
             jdbc.update(sql, ec.getId(), ec.getNombre(), ec.getDepartamento(),
                     "CONTRATISTA", null, null, ec.getTarifaPorHora(), ec.getHorasTrabajadas(), null);
+
+        } else if (emp instanceof EmpleadoPracticante ep) {
+            jdbc.update(sql, ep.getId(), ep.getNombre(), ep.getDepartamento(),
+                    "PRACTICANTE", ep.getEstipendio(), null, null, null, null);
         }
     }
 
@@ -58,6 +62,8 @@ public class EmpleadoDAO {
                     rs.getDouble("tarifa_hora"), rs.getInt("horas_trabajadas"));
             case "GERENTE"         -> new Gerente(id, nombre, depto,
                     rs.getDouble("salario_base"), rs.getDouble("prestaciones"), rs.getDouble("bono"));
+            case "PRACTICANTE"     -> new EmpleadoPracticante(id, nombre, depto,
+                    rs.getDouble("salario_base"));
             default -> null;
         };
     }
